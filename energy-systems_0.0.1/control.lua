@@ -19,7 +19,8 @@ script.on_event(defines.events.on_tick,
     for unit_number, entity in pairs(global.producers_util) do
       if entity.valid then
         if entity.is_connected_to_electric_network then
-          if entity.power_production == entity.electric_output_flow_limit then -- power_production
+          -- game.print(entity.prototype.max_energy_production) -- 15000
+          if entity.prototype.max_energy_production == entity.energy_generated_last_tick and entity.prototype.max_energy_production ~= 0 then -- power_production
             local powerdamage = 0.5
             entity.damage(powerdamage, "neutral")
           end

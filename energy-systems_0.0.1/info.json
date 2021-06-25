@@ -1,0 +1,9 @@
+{
+  "name": "energy-systems",
+  "version": "0.0.1",
+  "title": "Energy systems",
+  "author": "Aaron Riggs",
+  "factorio_version": "1.1",
+  "dependencies": ["base >= 1.1"],
+  "description": "This mod adds improved energy systems."
+}

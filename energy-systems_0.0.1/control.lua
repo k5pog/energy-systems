@@ -29,31 +29,34 @@ script.on_event(defines.events.on_tick,
   end
 )
 
-script.on_event(defines.events.on_built_entity,
-  function (event)
-    -- add to list
-    if event.created_entity and event.created_entity.valid and event.created_entity.name == "accumulator" then
-      global.accumulators[event.created_entity.unit_number] = event.created_entity
-      global.accumulators_energy_last_tick[event.created_entity.unit_number] = 0
-    end
-    if event.created_entity and event.created_entity.valid and event.created_entity.type == "generator" then
-      global.producers_util[event.created_entity.unit_number] = event.created_entity
-    end
+local function on_built_entity(event)
+  -- add to list
+  if event.created_entity and event.created_entity.valid and event.created_entity.name == "accumulator" then
+    global.accumulators[event.created_entity.unit_number] = event.created_entity
+    global.accumulators_energy_last_tick[event.created_entity.unit_number] = 0
   end
-)
+  if event.created_entity and event.created_entity.valid and event.created_entity.type == "generator" then
+    global.producers_util[event.created_entity.unit_number] = event.created_entity
+  end
+end
 
-script.on_event(defines.events.on_entity_died,
-  function (event)
-    -- remove from list
-    if event.entity and event.entity.valid and event.entity.name == "accumulator" then
-      -- global.accumulators_energy_last_tick[event.entity.unit_number].destroy()
-      global.accumulators[event.entity.unit_number].destroy()
-    end
-    if event.entity and event.entity.valid and event.entity.type == "generator" then --ElectricEnergyInterface
-      global.producers_util[event.entity.unit_number].destroy()
-    end
+script.on_event(defines.events.on_built_entity, on_built_entity)
+script.on_event(defines.events.on_robot_built_entity, on_built_entity)
+script.on_event(defines.events.script_raised_built, on_built_entity)
+
+local function on_entity_gone(event)
+  -- remove from list
+  if event.entity and event.entity.valid and event.entity.name == "accumulator" then
+    -- global.accumulators_energy_last_tick[event.entity.unit_number].destroy()
+    global.accumulators[event.entity.unit_number].destroy()
   end
-)
+  if event.entity and event.entity.valid and event.entity.type == "generator" then --ElectricEnergyInterface
+    global.producers_util[event.entity.unit_number].destroy()
+  end
+end
+
+script.on_event(defines.events.on_entity_died, on_entity_gone)
+script.on_event(defines.events.script_raised_destroy, on_entity_gone)
 
 local function on_init()
   global.accumulators = {}
